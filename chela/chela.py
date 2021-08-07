@@ -27,22 +27,32 @@ def from_string_to_dict(formula):
     capitalized_letter = [letter for letter in formula if letter.isupper()]
     dict_formula = {}
 
+    #Runs on every letter of the chemical formula,looking for the Capitalized letter to locate the start of the chemical element
     for index,letter in enumerate(formula):
         chemical_element = ''
         quantity_element = ''
         i = 0
 
         if letter in capitalized_letter:
+            #From the capitalized letter it start writing the chemical element's name untill it find a numeric value
             while not formula[index+i].isnumeric():
                 chemical_element += formula[index+i]
                 i +=1
-
-            while formula[index+i].isnumeric():
-                quantity_element += formula[index+i]
-                i +=1
-
+                #Stop the iteration when the formula doesn't have any other letter or number
                 if index+i == len(formula):
                     break
+            #If the formula contain more than one element
+            if index+i < len(formula):
 
-            dict_formula[chemical_element] = float(quantity_element)
+                #From the first encountered it start writing the chemical element's quantity untill it find the next chemical element's name
+                while formula[index+i].isnumeric():
+                    quantity_element += formula[index+i]
+                    i +=1
+                    #Stop the iteration when the formula doesn't have any other letter or number
+                    if index+i == len(formula):
+                        break
+
+                dict_formula[chemical_element] = float(quantity_element)
+            else:
+                dict_formula[chemical_element] = 1.0
     return dict_formula
