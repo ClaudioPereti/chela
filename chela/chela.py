@@ -38,11 +38,11 @@ def from_string_to_dict(formula):
             while not formula[index+i].isnumeric():
                 chemical_element += formula[index+i]
                 i +=1
-                #Stop the iteration when the formula doesn't have any other letter or number
-                if index+i == len(formula):
+                #Stop the iteration when the formula doesn't have any other letter or number or the next letter is of another element's name
+                if index+i == len(formula) or formula[index+i].isupper():
                     break
-            #If the formula contain more than one element
-            if index+i < len(formula):
+            #If the formula contain more than one element and the next letter is not the one of another element's name
+            if index+i < len(formula) and not formula[index+i].isupper():
 
                 #From the first encountered it start writing the chemical element's quantity untill it find the next chemical element's name
                 while formula[index+i].isnumeric():
@@ -52,7 +52,7 @@ def from_string_to_dict(formula):
                     if index+i == len(formula):
                         break
 
-                dict_formula[chemical_element] = float(quantity_element)
+                dict_formula[chemical_element] = quantity_element
             else:
                 dict_formula[chemical_element] = 1.0
     return dict_formula
