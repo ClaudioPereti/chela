@@ -5,15 +5,19 @@ def check_formula(formula):
     if not formula:
         raise EmptyFormula
 
-    if formula[0].isnumeric:
+    if formula[0].isnumeric():
         raise FirstElementAbsent
 
-
+    if not formula.isalnum():
+        raise NonAlphaNumericValue
 
 class EmptyFormula(ValueError):
     pass
 
 class FirstElementAbsent(ValueError):
+    pass
+
+class NonAlphaNumericValue(ValueError):
     pass
 
 
