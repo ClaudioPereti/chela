@@ -1,6 +1,6 @@
 
-def check_formula(formula):
-    """Check the correctness of the chemical formula"""
+def basic_check_formula(formula):
+    """Check the basic correctness of the chemical formula,i.e. empty string, absent element, presence of non alphanumeric value"""
 
     if not formula:
         raise EmptyFormula
@@ -19,6 +19,23 @@ class FirstElementAbsent(ValueError):
 
 class NonAlphaNumericValue(ValueError):
     pass
+
+class NegativeQuantityElement(ValueError):
+    pass
+
+class ZeroQuantityElement(ValueError):
+    pass
+
+def advanced_check_formula(formula):
+    """Check the advanced correctness fo the chemical formula, i.e. wrong chemical element, zero value, repeated element"""
+
+    dict_formula = from_string_to_dict(formula)
+    dict_values = list(dict_formula.values())
+
+    for value in dict_values:
+
+        if value == 0:
+            raise ZeroQuantityElement
 
 
 
