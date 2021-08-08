@@ -3,8 +3,10 @@ sys.path.append('chela/')
 import chela
 import pytest
 
-@pytest.mark.parametrize('check_formula',
-                                   ['',
+
+@pytest.mark.parametrize('basic_check_formula',
+                                   [
+                                   '',
                                    '1',
                                    '123H',
                                    '3O',
@@ -13,10 +15,36 @@ import pytest
                                    'O#F',
                                    ])
 
+class TestBasicFormula:
 
-def test_check_formula(check_formula):
-    with pytest.raises(ValueError):
-        chela.check_formula(check_formula)
+    def test_basic_check_formula(self,basic_check_formula):
+        with pytest.raises(ValueError):
+            chela.basic_check_formula(basic_check_formula)
+
+
+    def test_first_part_check_formula(self,basic_check_formula):
+        with pytest.raises(ValueError):
+            chela.check_formula(basic_check_formula)
+
+@pytest.mark.parametrize('advanced_check_formula',
+                                    [
+                                    'H0',
+                                    'H2O0',
+                                    'Xu',
+                                    'Yoyo2',
+                                    'HH',
+                                    'HOFO',
+                                    'N2H6N2',
+                                     ])
+
+class TestAdvancedFormula:
+    def test_advanced_check_formula(self,advanced_check_formula):
+        with pytest.raises(ValueError):
+            chela.advanced_check_formula(advanced_check_formula)
+
+    def test_second_part_check_formula(self,advanced_check_formula):
+        with pytest.raises(ValueError):
+            chela.check_formula(advanced_check_formula)
 
 @pytest.mark.parametrize('string_formula,dict_formula',
                                    [
