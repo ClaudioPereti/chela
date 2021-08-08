@@ -56,7 +56,7 @@ def from_string_to_dict(formula):
                     if index+i == len(formula):
                         break
 
-                dict_formula[chemical_element] = quantity_element
+                dict_formula[chemical_element] = float(quantity_element)
             else:
                 dict_formula[chemical_element] = 1.0
     return dict_formula
