@@ -102,7 +102,6 @@ def from_string_to_dict(formula):
     return dict_formula
 
 
-#%%
 def csv_to_dataframe(path=path,header = False,property = [],robust = False):
     """Load a csv file containing chemical formula and transform it into a DataFrame"""
 
@@ -154,265 +153,27 @@ def csv_to_dataframe(path=path,header = False,property = [],robust = False):
         chem_dataset[name] = formula_dataset[name]
 
     return chem_dataset
-
+#%%
 csv_to_dataframe(path,header = True,property = ['col'])
 import sys
 sys.path.append('/home/claudio/chela/env_chela/lib/python3.6/site-packages')
-import pandas as pd
-import numpy as np
-advanced_check_formula('H2O')
-path = '../prova_col.csv'
-for i in range(10):
-    if i == 1:
-        continue
-    print(i)
-chem_dataset = pd.read_csv(path,names=['formula','col'],index_col=False)
-chem_dataset
-#chem_dataset[chem_dataset.duplicated(subset=['formula'])]
-chem_dataset = chem_dataset.drop_duplicates(subset = ['formula'])
-#get duplicated row aggregating them with mean value on critical temperature
-#compose the entire dataset
-#supercon= supercon.append(duplicated_row,ignore_index=True)
-#initialize a dictionary with element symbol,critical_temp,material as keys
-chemical_element = ['H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca', 'Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 'Ga', 'Ge', 'As', 'Se', 'Br', 'Kr', 'Rb', 'Sr', 'Y', 'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Cd', 'In', 'Sn', 'Sb', 'Te', 'I', 'Xe', 'Cs', 'Ba', 'La', 'Ce', 'Pr', 'Nd', 'Pm', 'Sm', 'Eu', 'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Tm', 'Yb', 'Lu', 'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg', 'Tl', 'Pb', 'Bi', 'Po', 'At', 'Rn', 'Fr', 'Ra', 'Ac', 'Th', 'Pa', 'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es', 'Fm', 'Md', 'No', 'Lr', 'Rf', 'Db', 'Sg', 'Bh', 'Hs', 'Mt', 'Ds', 'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv', 'Ts', 'Og']
+#%%
 
-d = {}
-data = pd.DataFrame(columns=chemical_element)
-for material in chem_dataset['formula']:
-    check_formula(material)
-    d = {**d,**from_string_to_dict(material)}
-    data = data.append(pd.DataFrame(d))
-    d = {}
+@pd.api.extensions.register_dataframe_accessor("chemdata")
+class ChemDataFrame:
 
-chem_dataset
-data = data.replace(np.nan,0)
-data = data.reset_index(drop=True)
-data = data.drop(columns =['index','level_0'])
-data['formula'] = chem_dataset
+
+    def __init__(self, pandas_obj):
+        self._obj = pandas_obj
+
+    @classmethod
+    def from_string_to_dict(self,formula):
+        return from_string_to_dict(formula)
+#%%
+
+data = pd.DataFrame(from_string_to_dict('H2O'))
 data
-sc_dict={}
-num_element = 96
-for i in range(1,num_element+1):
-    sc_dict[element(i).symbol] = []
+data.chemdata.chemprint()
 
-sc_dict['material'] = []
-sc_dict['critical_temp'] = []
-#list with all the element symbol
-list_element = list(sc_dict.keys())[:num_element]
-#search element that are put more than one time in a formula
-repeted_values = []
-list_heavy_element = list_element[86:96]
-heavy_element = []
-wrong_element = []
-wrong_coef = []
-zero_element = []
-for i in range(supercon['formula'].shape[0]):
-
-    sc_string = supercon['formula'][i]
-    tupl_atom = []
-    from_string_to_dict(sc_string,tupl_atom)
-    list_atom = []
-    for j in range(len(tupl_atom)):
-        list_atom.append(tupl_atom[j][0])
-
-        if float(tupl_atom[j][1]) > 150:
-            wrong_coef.append(i)
-
-
-        if float(tupl_atom[j][1]) == 0:
-            zero_element.append(i)
-
-        if tupl_atom[j][0] not in list_element:
-            wrong_element.append(i)
-
-        if tupl_atom[j][0] in list_heavy_element:
-            heavy_element.append(i)
-            break
-
-    if len(list(set(list_atom))) != len(list_atom):
-
-        repeted_values.append(i)
-#drop repeted element and reset index
-row_to_drop = []
-if  drop_heavy_element:
-    row_to_drop = repeted_values + heavy_element + wrong_element + wrong_coef + zero_element
-    num_element = 86
-else:
-    row_to_drop = repeted_values + wrong_element + wrong_coef+ zero_element
-    num_element = 96
-
-row_to_drop = list(set(row_to_drop))
-supercon.drop(row_to_drop,inplace = True)
-# supercon.drop(repeted_values,inplace=True)
-# supercon.drop(heavy_element,inplace=True)
-# print(len(wrong_element))
-# supercon.drop(wrong_element,inplace = True)
-supercon.reset_index(drop= True, inplace=True)
-
-sc_dict={}
-#num_element = 86
-for i in range(1,num_element+1):
-    sc_dict[element(i).symbol] = []
-
-sc_dict['critical_temp'] = []
-sc_dict['material'] = []
-
-
-#list with the elements symbol
-element_list = list(sc_dict.keys())
-element_list = element_list[:-2]
-element_list = set(element_list)
-if normalized:
-    tupl_atom = normalize_formula(tupl_atom)
-#create a dictionary with the quantity of each element on the molecules and relative chemical formula and critical temperature
-for i in range(supercon['formula'].shape[0]):
-
-    sc_string = supercon['formula'][i]
-    sc_dict['material'].append(sc_string)
-    sc_dict['critical_temp'].append(float(supercon['tc'][i]))
-    tupl_atom = []
-    from_string_to_dict(sc_string,tupl_atom)
-    if normalized:
-        tupl_atom = normalize_formula(tupl_atom)
-    list_atom = []
-    for j in range(len(tupl_atom)):
-        list_atom.append(tupl_atom[j][0])
-
-        if tupl_atom[j][0] in list_element:
-            sc_dict[tupl_atom[j][0]].append(float(tupl_atom[j][1]))
-
-    element_not_present = element_list - (set(list_atom))
-
-    for el in element_not_present:
-        sc_dict[el].append(0.0)
-
-sc_dataframe = pd.DataFrame(sc_dict)
-if not material:
-    sc_dataframe.drop(axis=1,inplace=True,columns=['material'])
-sc_dataframe.to_csv('../../data/raw/'+name,index = False)
-
-
-
-
-def create_dataset(material=False,path = path,drop_heavy_element = False,normalized=False):
-    """Create a dataset of superconductor and non-superconducting materials
-
-    Args:
-        material (bool): a flag used to indicate if keep or not the material column
-        name (str): the name of the saved file (default is supercon_tot.csv)
-    """
-    #read data in a column separed format
-    #supercon = pd.read_csv('../../data/raw/SuperCon_database.dat',delimiter = r"\s+",names = ['formula','tc'])
-    supercon = pd.read_csv('../../data/raw/supercon_garbage.csv',names=['formula','tc'])
-    supercon.drop(0,inplace=True)
-    supercon['tc'] = supercon['tc'].astype(float)
-    #supercon.rename(columns = {'material':'formula','critical_temp':'tc'},inplace=True)
-    #remove rows with nan value on tc
-    supercon = supercon.dropna()
-    #get duplicated row aggregating them with mean value on critical temperature
-    duplicated_row = supercon[supercon.duplicated(subset = ['formula'],keep = False)].groupby('formula').aggregate({'tc':'mean'}).reset_index()
-    #drop all the duplicated row
-    supercon.drop_duplicates(subset = ['formula'],inplace = True,keep = False)
-    #compose the entire dataset
-    supercon= supercon.append(duplicated_row,ignore_index=True)
-    #initialize a dictionary with element symbol,critical_temp,material as keys
-    sc_dict={}
-    num_element = 96
-    for i in range(1,num_element+1):
-        sc_dict[element(i).symbol] = []
-
-    sc_dict['material'] = []
-    sc_dict['critical_temp'] = []
-    #list with all the element symbol
-    list_element = list(sc_dict.keys())[:num_element]
-    #search element that are put more than one time in a formula
-    repeted_values = []
-    list_heavy_element = list_element[86:96]
-    heavy_element = []
-    wrong_element = []
-    wrong_coef = []
-    zero_element = []
-    for i in range(supercon['formula'].shape[0]):
-
-        sc_string = supercon['formula'][i]
-        tupl_atom = []
-        from_string_to_dict(sc_string,tupl_atom)
-        list_atom = []
-        for j in range(len(tupl_atom)):
-            list_atom.append(tupl_atom[j][0])
-
-            if float(tupl_atom[j][1]) > 150:
-                wrong_coef.append(i)
-
-
-            if float(tupl_atom[j][1]) == 0:
-                zero_element.append(i)
-
-            if tupl_atom[j][0] not in list_element:
-                wrong_element.append(i)
-
-            if tupl_atom[j][0] in list_heavy_element:
-                heavy_element.append(i)
-                break
-
-        if len(list(set(list_atom))) != len(list_atom):
-
-            repeted_values.append(i)
-    #drop repeted element and reset index
-    row_to_drop = []
-    if  drop_heavy_element:
-        row_to_drop = repeted_values + heavy_element + wrong_element + wrong_coef + zero_element
-        num_element = 86
-    else:
-        row_to_drop = repeted_values + wrong_element + wrong_coef+ zero_element
-        num_element = 96
-
-    row_to_drop = list(set(row_to_drop))
-    supercon.drop(row_to_drop,inplace = True)
-    # supercon.drop(repeted_values,inplace=True)
-    # supercon.drop(heavy_element,inplace=True)
-    # print(len(wrong_element))
-    # supercon.drop(wrong_element,inplace = True)
-    supercon.reset_index(drop= True, inplace=True)
-
-    sc_dict={}
-    #num_element = 86
-    for i in range(1,num_element+1):
-        sc_dict[element(i).symbol] = []
-
-    sc_dict['critical_temp'] = []
-    sc_dict['material'] = []
-
-
-    #list with the elements symbol
-    element_list = list(sc_dict.keys())
-    element_list = element_list[:-2]
-    element_list = set(element_list)
-    if normalized:
-        tupl_atom = normalize_formula(tupl_atom)
-    #create a dictionary with the quantity of each element on the molecules and relative chemical formula and critical temperature
-    for i in range(supercon['formula'].shape[0]):
-
-        sc_string = supercon['formula'][i]
-        sc_dict['material'].append(sc_string)
-        sc_dict['critical_temp'].append(float(supercon['tc'][i]))
-        tupl_atom = []
-        from_string_to_dict(sc_string,tupl_atom)
-        if normalized:
-            tupl_atom = normalize_formula(tupl_atom)
-        list_atom = []
-        for j in range(len(tupl_atom)):
-            list_atom.append(tupl_atom[j][0])
-
-            if tupl_atom[j][0] in list_element:
-                sc_dict[tupl_atom[j][0]].append(float(tupl_atom[j][1]))
-
-        element_not_present = element_list - (set(list_atom))
-
-        for el in element_not_present:
-            sc_dict[el].append(0.0)
-
-    sc_dataframe = pd.DataFrame(sc_dict)
-    if not material:
-        sc_dataframe.drop(axis=1,inplace=True,columns=['material'])
-    sc_dataframe.to_csv('../../data/raw/'+name,index = False)
+d = data.chemdata.from_string_to_dict('H2O')
+pd.DataFrame.chemdata.from_string_to_dict('H2O')
