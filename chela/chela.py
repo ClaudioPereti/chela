@@ -153,6 +153,8 @@ def csv_to_dataframe(path=path,header = False,property = [],robust = False):
         chem_dataset[name] = formula_dataset[name]
 
     return chem_dataset
+
+
 #%%
 csv_to_dataframe(path,header = True,property = ['col'])
 import sys
@@ -162,18 +164,33 @@ sys.path.append('/home/claudio/chela/env_chela/lib/python3.6/site-packages')
 @pd.api.extensions.register_dataframe_accessor("chemdata")
 class ChemDataFrame:
 
-
     def __init__(self, pandas_obj):
         self._obj = pandas_obj
 
     @classmethod
     def from_string_to_dict(self,formula):
         return from_string_to_dict(formula)
+
+    @classmethod
+    def csv_to_dataframe(self,path=path,header = False,property = [],robust = False):
+        return csv_to_dataframe(path=path,header = False,property = [],robust = False)
+
+    @classmethod
+    def check_formula(self,formula):
+        return check_formula(formula)
+
+
 #%%
 
 data = pd.DataFrame(from_string_to_dict('H2O'))
 data
-data.chemdata.chemprint()
 
-d = data.chemdata.from_string_to_dict('H2O')
+
+data.chemdata.from_string_to_dict('H2O')
 pd.DataFrame.chemdata.from_string_to_dict('H2O')
+pd.DataFrame.chemdata.check_formula('!H2O')
+data.chemdata.csv_to_dataframe('../prova_formula.csv')
+
+import os
+
+os.getcwd()
