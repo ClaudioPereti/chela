@@ -234,23 +234,23 @@ class ChemDataFrame:
     #Transform a string containing a chemical formula into a dict
     @staticmethod
     def from_string_to_dict(formula):
-    """Transform the chemical formula from a string to a dict
+        """Transform the chemical formula from a string to a dict
 
-    Transform the string representing the chemical formula into a dictionary,
-    where the keys are the atomic symbols and the values are list containing quantity.
+        Transform the string representing the chemical formula into a dictionary,
+        where the keys are the atomic symbols and the values are list containing quantity.
 
-    Args:
-        formula: A string representing the chemical formula
+        Args:
+            formula: A string representing the chemical formula
 
-    Returns:
-        A dictionary containing the atomic symbols are keys and the list of quantity as values
-    """
+        Returns:
+            A dictionary containing the atomic symbols are keys and the list of quantity as values
+        """
 
         return from_string_to_dict(formula)
 
     #Transform a csv file containing chemical formulas into a pandas dataframe
     @staticmethod
-    def csv_to_dataframe(cls,path,header = False,property = [],robust = False):
+    def csv_to_dataframe(path,header = False,property = [],robust = False):
         """Load a csv file containing chemical formula and transform it into a DataFrame
 
         Load a csv file containig chemical formula in a column into a pandas DataFrame. The Pandas DataFrame has element symbols and chemical formula as columns;
@@ -258,15 +258,16 @@ class ChemDataFrame:
 
         Args:
             path: A string containig the path and the name of the csv file
-            header: Optional (Default:False); A boolean indicating if the csv file have as first row the word 'formula'
+            header: Optional (Default:False); A boolean indicating if the csv file doesn't have as first row the word 'formula'
             property: Optional; A list containg the name of other property, excluded 'formula', of the material both written in the csv file
             robust: Optional ( Default:False); A Boolean stopping the conversion into a DataFrame if mispelled or wrong formula are found.
                         If robust is set to True it continue skipping the problematic formula
 
-        Return: A pandas DataFrame with columns set as element symbols, as chemical formula and as property element if present
+        Return:
+            A pandas DataFrame with columns set as element symbols, as chemical formula and as property element if present
         """
 
-        return csv_to_dataframe(path,header = False,property = [],robust = False)
+        return csv_to_dataframe(path,header = header,property = property,robust = robust)
 
     #Check the correctness of the chemical formula
     @staticmethod
@@ -297,8 +298,8 @@ class ChemDataFrame:
         Args:
             Z: Atomic number of the greatest atoms that can be present in the chemical formulas
 
-        Return: Pandas DataFrame with the selected materials
-
+        Return:
+            Pandas DataFrame with the selected materials
         """
         chem_data = self._obj
         Z -=1
@@ -306,7 +307,12 @@ class ChemDataFrame:
 
         return chem_data
 
+#%%
 
+#with open('elements.csv','w') as elements:
+#    elements.write('formula\n')
+#    for i in range(1,119):
+#        elements.write(element(i).symbol + '\n')
 
 #%%
 #Z = 1
@@ -318,8 +324,13 @@ class ChemDataFrame:
 #data.chemdata.drop_heavy_elements(Z = 2)
 #pd.DataFrame.chemdata.from_string_to_dict('H2O')
 #pd.DataFrame.chemdata.check_formula('!H2O')
-#data = data.chemdata.csv_to_dataframe('../prova_formula.csv')
+#data = pd.DataFrame.chemdata.csv_to_dataframe(path = 'elements.csv')
 
+#data = data.drop(columns = ['formula'])
+#(data.to_numpy() == np.eye(118,118)).all()
+#import numpy as np
+
+#np.eye(118,118)
 #import os
 
 #os.getcwd()
