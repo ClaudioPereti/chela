@@ -103,7 +103,20 @@ def from_string_to_dict(formula):
 
 #%%
 def csv_to_dataframe(path,header = False,property = [],robust = False):
-    """Load a csv file containing chemical formula and transform it into a DataFrame"""
+    """Load a csv file containing chemical formula and transform it into a DataFrame
+
+    Load a csv file containig chemical formula in a column into a pandas DataFrame. The Pandas DataFrame has element symbols and chemical formula as columns;
+    If property is not a empty list there are preperty names too as columns. Every row represent a material with the relative quantity written in the columns.
+
+    Args:
+        path: A string containig the path and the name of the csv file
+        header: Optional (Default:False); A boolean indicating if the csv file have as first row the word 'formula'
+        property: Optional; A list containg the name of other property, excluded 'formula', of the material both written in the csv file
+        robust: Optional ( Default:False); A Boolean stopping the conversion into a DataFrame if mispelled or wrong formula are found.
+                If robust is set to True it continue skipping the problematic formula
+
+    Return: A pandas DataFrame with columns set as element symbols, as chemical formula and as property element if present
+    """
 
     import pandas as pd
     import numpy as np
@@ -136,8 +149,8 @@ def csv_to_dataframe(path,header = False,property = [],robust = False):
             except:
                 #Pass to the next iteration
                 continue
-
-        else:
+#controlla funzionamento con robust e senza
+        finally:
             check_formula(material)
             #Create dictiornary containing chemical formula
             dict_formula = from_string_to_dict(material)
@@ -172,20 +185,48 @@ class ChemDataFrame:
     def __repr__(self):
         return self._obj.head()
 
+    #Transform a string containing a chemical formula into a dict
     @staticmethod
     def from_string_to_dict(formula):
         return from_string_to_dict(formula)
 
+    #Transform a csv file containing chemical formulas into a pandas dataframe
     @staticmethod
     def csv_to_dataframe(cls,path,header = False,property = [],robust = False):
+        """Load a csv file containing chemical formula and transform it into a DataFrame
+
+        Load a csv file containig chemical formula in a column into a pandas DataFrame. The Pandas DataFrame has element symbols and chemical formula as columns;
+        If property is not a empty list there are preperty names too as columns. Every row represent a material with the relative quantity written in the columns.
+
+        Args:
+            path: A string containig the path and the name of the csv file
+            header: Optional (Default:False); A boolean indicating if the csv file have as first row the word 'formula'
+            property: Optional; A list containg the name of other property, excluded 'formula', of the material both written in the csv file
+            robust: Optional ( Default:False); A Boolean stopping the conversion into a DataFrame if mispelled or wrong formula are found.
+                        If robust is set to True it continue skipping the problematic formula
+
+        Return: A pandas DataFrame with columns set as element symbols, as chemical formula and as property element if present
+        """
+
         return csv_to_dataframe(path,header = False,property = [],robust = False)
 
+    #Check the correctness of the chemical formula
     @staticmethod
     def check_formula(formula):
         return check_formula(formula)
 
 
     def drop_heavy_elements(self,Z):
+        """Drop heavier element with atomic number greater than Z
+
+        Drops chemical formula containing atoms with atomic number strictly greater than Z
+
+        Args:
+            Z: Atomic number of the greatest atoms that can be present in the chemical formulas
+
+        Return: Pandas DataFrame with the selected materials
+
+        """
         chem_data = self._obj
         Z -=1
         chem_data = chem_data[chem_data.iloc[:,Z:].sum(axis=1) == 0]
