@@ -2,6 +2,7 @@ import sys
 sys.path.append('chela/')
 import chela
 import pandas as pd
+import numpy as np
 import pytest
 
 
@@ -71,3 +72,11 @@ class TestStringoToDict:
 
     def test_pandas_ext_from_string_to_dict(self,string_formula,dict_formula):
          assert pd.DataFrame().chemdata.from_string_to_dict(string_formula) == dict_formula
+
+
+
+def test_pandas_ext_csv_to_dataframe_all_elements_non_header(path = 'elements_non_header.csv',header=True):
+
+    data = pd.DataFrame.chemdata.csv_to_dataframe(path = path,header=header)
+    data = data.drop(columns = ['formula'])
+    assert (data.to_numpy() == np.eye(118,118)).all()
