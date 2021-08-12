@@ -64,5 +64,10 @@ class TestAdvancedFormula:
                                    ('NH3',{'N':[1],'H':[3]}),
                                    ])
 
-def test_from_string_to_dict(string_formula,dict_formula):
-    assert chela.from_string_to_dict(string_formula) == dict_formula
+class TestStringoToDict:
+    def test_from_string_to_dict(self,string_formula,dict_formula):
+        assert chela.from_string_to_dict(string_formula) == dict_formula
+
+
+    def test_pandas_ext_from_string_to_dict(self,string_formula,dict_formula):
+         assert pd.DataFrame().chemdata.from_string_to_dict(string_formula) == dict_formula
