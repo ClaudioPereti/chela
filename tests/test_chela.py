@@ -75,8 +75,12 @@ class TestStringoToDict:
 
 
 
-def test_pandas_ext_csv_to_dataframe_all_elements_non_header(path = 'elements_non_header.csv',header=True):
+@pytest.mark.parametrize("elements,header",[
+                            ('elements.csv',False),
+                            ('elements_non_header.csv',True)
+                            ])
+def test_pandas_ext_csv_to_dataframe_all_elements_non_header(elements,header):
 
-    data = pd.DataFrame.chemdata.csv_to_dataframe(path = path,header=header)
+    data = pd.DataFrame.chemdata.csv_to_dataframe(path = elements,header=header)
     data = data.drop(columns = ['formula'])
     assert (data.to_numpy() == np.eye(118,118)).all()
