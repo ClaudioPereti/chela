@@ -1,6 +1,7 @@
 import sys
 sys.path.append('chela/')
 import chela
+import pandas as pd
 import pytest
 
 
@@ -26,6 +27,10 @@ class TestBasicFormula:
         with pytest.raises(ValueError):
             chela.check_formula(basic_check_formula)
 
+    def test_pandas_ext_check_formula(self,basic_check_formula):
+        with pytest.raises(ValueError):
+            pd.DataFrame().chemdata.check_formula(basic_check_formula)
+
 @pytest.mark.parametrize('advanced_check_formula',
                                     [
                                     'H0',
@@ -46,12 +51,17 @@ class TestAdvancedFormula:
         with pytest.raises(ValueError):
             chela.check_formula(advanced_check_formula)
 
+    def test_pandas_ext_check_formula(self,advanced_check_formula):
+        with pytest.raises(ValueError):
+            pd.DataFrame().chemdata.check_formula(advanced_check_formula)
+
+
 @pytest.mark.parametrize('string_formula,dict_formula',
                                    [
-                                   ('H',{'H':1}),
-                                   ('H2O',{'H':2,'O':1}),
-                                   ('OH',{'H':1,'O':1}),
-                                   ('NH3',{'N':1,'H':3}),
+                                   ('H',{'H':[1]}),
+                                   ('H2O',{'H':[2],'O':[1]}),
+                                   ('OH',{'H':[1],'O':[1]}),
+                                   ('NH3',{'N':[1],'H':[3]}),
                                    ])
 
 def test_from_string_to_dict(string_formula,dict_formula):
