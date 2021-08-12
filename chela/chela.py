@@ -40,7 +40,7 @@ def advanced_check_formula(formula):
 
     #Check the presence of a element with 0 quantity
     for value in dict_formula.values():
-        if value == 0:
+        if value[0] == 0:
             raise ZeroQuantityElement
     #Check the presence of inexistent or mispelled element
     for element in dict_formula.keys():
@@ -156,7 +156,7 @@ def csv_to_dataframe(path,header = False,property = [],robust = False):
 
 
 #%%
-csv_to_dataframe(path,header = True,property = ['col'])
+#csv_to_dataframe(path,header = True,property = ['col'])
 import sys
 sys.path.append('/home/claudio/chela/env_chela/lib/python3.6/site-packages')
 import pandas as pd
@@ -195,17 +195,17 @@ class ChemDataFrame:
 
 
 #%%
-Z = 1
-Z -=1
-data.iloc[:,Z:].sum(axis=1) == 0
-data[data.iloc[:,Z:].sum(axis=1) == 0]
-data.head()
-data.chemdata._obj.head()
-data.chemdata.drop_heavy_elements(Z = 2)
-pd.DataFrame.chemdata.from_string_to_dict('H2O')
-pd.DataFrame.chemdata.check_formula('!H2O')
-data = data.chemdata.csv_to_dataframe('../prova_formula.csv')
+#Z = 1
+#Z -=1
+#data.iloc[:,Z:].sum(axis=1) == 0
+#data[data.iloc[:,Z:].sum(axis=1) == 0]
+#data.head()
+#data.chemdata._obj.head()
+#data.chemdata.drop_heavy_elements(Z = 2)
+#pd.DataFrame.chemdata.from_string_to_dict('H2O')
+#pd.DataFrame.chemdata.check_formula('!H2O')
+#data = data.chemdata.csv_to_dataframe('../prova_formula.csv')
 
-import os
+#import os
 
-os.getcwd()
+#os.getcwd()
