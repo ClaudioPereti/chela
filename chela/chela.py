@@ -101,8 +101,8 @@ def from_string_to_dict(formula):
                 dict_formula[chemical_element] = [1.0]
     return dict_formula
 
-
-def csv_to_dataframe(path=path,header = False,property = [],robust = False):
+#%%
+def csv_to_dataframe(path,header = False,property = [],robust = False):
     """Load a csv file containing chemical formula and transform it into a DataFrame"""
 
     import pandas as pd
@@ -159,37 +159,52 @@ def csv_to_dataframe(path=path,header = False,property = [],robust = False):
 csv_to_dataframe(path,header = True,property = ['col'])
 import sys
 sys.path.append('/home/claudio/chela/env_chela/lib/python3.6/site-packages')
+import pandas as pd
 #%%
 
 @pd.api.extensions.register_dataframe_accessor("chemdata")
 class ChemDataFrame:
+    """Extention of the pandas dataframe to deal with chemical data"""
 
     def __init__(self, pandas_obj):
         self._obj = pandas_obj
 
-    @classmethod
-    def from_string_to_dict(self,formula):
+    def __repr__(self):
+        return self._obj.head()
+
+    @staticmethod
+    def from_string_to_dict(formula):
         return from_string_to_dict(formula)
 
-    @classmethod
-    def csv_to_dataframe(self,path=path,header = False,property = [],robust = False):
-        return csv_to_dataframe(path=path,header = False,property = [],robust = False)
+    @staticmethod
+    def csv_to_dataframe(cls,path,header = False,property = [],robust = False):
+        return csv_to_dataframe(path,header = False,property = [],robust = False)
 
-    @classmethod
-    def check_formula(self,formula):
+    @staticmethod
+    def check_formula(formula):
         return check_formula(formula)
 
 
+    def drop_heavy_elements(self,Z):
+        chem_data = self._obj
+        Z -=1
+        chem_data = chem_data[chem_data.iloc[:,Z:].sum(axis=1) == 0]
+
+        return chem_data
+
+
+
 #%%
-
-data = pd.DataFrame(from_string_to_dict('H2O'))
-data
-
-
-data.chemdata.from_string_to_dict('H2O')
+Z = 1
+Z -=1
+data.iloc[:,Z:].sum(axis=1) == 0
+data[data.iloc[:,Z:].sum(axis=1) == 0]
+data.head()
+data.chemdata._obj.head()
+data.chemdata.drop_heavy_elements(Z = 2)
 pd.DataFrame.chemdata.from_string_to_dict('H2O')
 pd.DataFrame.chemdata.check_formula('!H2O')
-data.chemdata.csv_to_dataframe('../prova_formula.csv')
+data = data.chemdata.csv_to_dataframe('../prova_formula.csv')
 
 import os
 
