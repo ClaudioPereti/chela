@@ -146,17 +146,17 @@ def csv_to_dataframe(path,header = False,property = [],robust = False):
         if robust:
             try:
                 check_formula(material)
-            except:
+            except ValueError:
                 #Pass to the next iteration
                 continue
-#controlla funzionamento con robust e senza
-        finally:
+        #controlla funzionamento con robust e senza
+        else:
             check_formula(material)
-            #Create dictiornary containing chemical formula
-            dict_formula = from_string_to_dict(material)
-            #Convert the dictionary into a DataFrame
-            chem_dataset = chem_dataset.append(pd.DataFrame(dict_formula))
-            dict_formula = {}
+        #Create dictiornary containing chemical formula
+        dict_formula = from_string_to_dict(material)
+        #Convert the dictionary into a DataFrame
+        chem_dataset = chem_dataset.append(pd.DataFrame(dict_formula))
+        dict_formula = {}
     #Put 0 on the element non present in the chemical formula
     chem_dataset = chem_dataset.replace(np.nan,0)
     #Reset the index
@@ -173,6 +173,8 @@ def csv_to_dataframe(path,header = False,property = [],robust = False):
 import sys
 sys.path.append('/home/claudio/chela/env_chela/lib/python3.6/site-packages')
 import pandas as pd
+#%%
+
 #%%
 
 @pd.api.extensions.register_dataframe_accessor("chemdata")
