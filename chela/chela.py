@@ -1,6 +1,16 @@
 
 def basic_check_formula(formula):
-    """Check the basic correctness of the chemical formula,i.e. empty string, absent element, presence of non alphanumeric value"""
+    """Check the basic correctness of the chemical formula,i.e. empty string, absent element, presence of non alphanumeric value
+
+    Args:
+        formula: A string representing the chemical formula
+
+    Raises:
+        EmptyFormula: ValueError indicating the string is empty
+        FirstElementAbsent: ValueError indicating the string starts with a number; the first atom is absent
+        NonAlphaNumericValue: ValueError indicating the presence of symbol different from numbers and letters
+    """
+
     #Check if the string is empty
     if not formula:
         raise EmptyFormula
@@ -33,7 +43,17 @@ class RepeatedElement(ValueError):
     pass
 
 def advanced_check_formula(formula):
-    """Check the advanced correctness fo the chemical formula, i.e. wrong chemical element, zero value, repeated element"""
+    """Check the advanced correctness fo the chemical formula, i.e. wrong chemical element, zero value, repeated element
+
+    Args:
+        formula: A string representing the chemical formula
+
+    Raises:
+        ZeroQuantityElement: ValueError indicating the presence of element with  quantity 0 in the formula
+        NonExistentElement: ValueError indicating the presence of letters non representing atomic symbol
+        RepeatedElement: ValueError indicating the repetition of an atomic symbol
+
+    """
 
     dict_formula = from_string_to_dict(formula)
     chemical_element = ['H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca', 'Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 'Ga', 'Ge', 'As', 'Se', 'Br', 'Kr', 'Rb', 'Sr', 'Y', 'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Cd', 'In', 'Sn', 'Sb', 'Te', 'I', 'Xe', 'Cs', 'Ba', 'La', 'Ce', 'Pr', 'Nd', 'Pm', 'Sm', 'Eu', 'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Tm', 'Yb', 'Lu', 'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg', 'Tl', 'Pb', 'Bi', 'Po', 'At', 'Rn', 'Fr', 'Ra', 'Ac', 'Th', 'Pa', 'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es', 'Fm', 'Md', 'No', 'Lr', 'Rf', 'Db', 'Sg', 'Bh', 'Hs', 'Mt', 'Ds', 'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv', 'Ts', 'Og']
@@ -42,6 +62,7 @@ def advanced_check_formula(formula):
     for value in dict_formula.values():
         if value[0] == 0:
             raise ZeroQuantityElement
+
     #Check the presence of inexistent or mispelled element
     for element in dict_formula.keys():
         if not element in chemical_element:
@@ -57,13 +78,37 @@ def advanced_check_formula(formula):
         raise RepeatedElement
 
 def check_formula(formula):
+    """Complete check of the correctness of the chemical formula
+
+    Args:
+        formula: A string representing the chemical formula
+
+    Raises:
+        EmptyFormula: ValueError indicating the string is empty
+        FirstElementAbsent: ValueError indicating the string starts with a number; the first atom is absent
+        NonAlphaNumericValue: ValueError indicating the presence of symbol different from numbers and letters
+        ZeroQuantityElement: ValueError indicating the presence of element with  quantity 0 in the formula
+        NonExistentElement: ValueError indicating the presence of letters non representing atomic symbol
+        RepeatedElement: ValueError indicating the repetition of an atomic symbol
+
+    """
     basic_check_formula(formula)
     advanced_check_formula(formula)
 
 
 
 def from_string_to_dict(formula):
-    """Transform the chemical formula from a string to a dict"""
+    """Transform the chemical formula from a string to a dict
+
+    Transform the string representing the chemical formula into a dictionary,
+    where the keys are the atomic symbols and the values are list containing quantity.
+
+    Args:
+        formula: A string representing the chemical formula
+
+    Returns:
+        A dictionary containing the atomic symbols are keys and the list of quantity as values
+    """
 
     #Locate the capitalized letter
     #The capitalized letter indicate the start of the chemical element's name
@@ -101,7 +146,7 @@ def from_string_to_dict(formula):
                 dict_formula[chemical_element] = [1.0]
     return dict_formula
 
-#%%
+
 def csv_to_dataframe(path,header = False,property = [],robust = False):
     """Load a csv file containing chemical formula and transform it into a DataFrame
 
@@ -115,7 +160,8 @@ def csv_to_dataframe(path,header = False,property = [],robust = False):
         robust: Optional ( Default:False); A Boolean stopping the conversion into a DataFrame if mispelled or wrong formula are found.
                 If robust is set to True it continue skipping the problematic formula
 
-    Return: A pandas DataFrame with columns set as element symbols, as chemical formula and as property element if present
+    Return:
+        A pandas DataFrame with columns set as element symbols, as chemical formula and as property element if present
     """
 
     import pandas as pd
@@ -175,8 +221,6 @@ sys.path.append('/home/claudio/chela/env_chela/lib/python3.6/site-packages')
 import pandas as pd
 #%%
 
-#%%
-
 @pd.api.extensions.register_dataframe_accessor("chemdata")
 class ChemDataFrame:
     """Extention of the pandas dataframe to deal with chemical data"""
@@ -190,6 +234,18 @@ class ChemDataFrame:
     #Transform a string containing a chemical formula into a dict
     @staticmethod
     def from_string_to_dict(formula):
+    """Transform the chemical formula from a string to a dict
+
+    Transform the string representing the chemical formula into a dictionary,
+    where the keys are the atomic symbols and the values are list containing quantity.
+
+    Args:
+        formula: A string representing the chemical formula
+
+    Returns:
+        A dictionary containing the atomic symbols are keys and the list of quantity as values
+    """
+
         return from_string_to_dict(formula)
 
     #Transform a csv file containing chemical formulas into a pandas dataframe
@@ -215,6 +271,21 @@ class ChemDataFrame:
     #Check the correctness of the chemical formula
     @staticmethod
     def check_formula(formula):
+        """Complete check of the correctness of the chemical formula
+
+        Args:
+            formula: A string representing the chemical formula
+
+        Raises:
+            EmptyFormula: ValueError indicating the string is empty
+            FirstElementAbsent: ValueError indicating the string starts with a number; the first atom is absent
+            NonAlphaNumericValue: ValueError indicating the presence of symbol different from numbers and letters
+            ZeroQuantityElement: ValueError indicating the presence of element with  quantity 0 in the formula
+            NonExistentElement: ValueError indicating the presence of letters non representing atomic symbol
+            RepeatedElement: ValueError indicating the repetition of an atomic symbol
+
+        """
+
         return check_formula(formula)
 
 
