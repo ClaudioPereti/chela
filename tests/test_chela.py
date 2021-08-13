@@ -118,3 +118,5 @@ class TestCsvToDataframeMolecules:
         data = pd.DataFrame.chemdata.csv_to_dataframe(path = chemical_formula,header=header,property=property)
         data_checked = pd.read_csv(chemical_formula_checked)
         assert (data == data_checked).all().all()
+
+#ADD TEST FOR ROBUST
