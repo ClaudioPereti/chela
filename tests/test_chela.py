@@ -75,20 +75,22 @@ class TestStringoToDict:
 
 
 
-@pytest.mark.parametrize("elements,header",[
-                            ('elements.csv',False),
-                            ('elements_non_header.csv',True)
+@pytest.mark.parametrize("elements,header,property",[
+                            ('elements.csv',False,[]),
+                            ('elements_non_header.csv',True,[]),
+                            ('elements_header_property.csv',False,[]),
+                            ('elements_non_header_property.csv',True,['atomic_number'])
                             ])
 
 class TestCsvToDataframe:
-    def test_pandas_ext_csv_to_dataframe_all_elements(self,elements,header):
+    def test_pandas_ext_csv_to_dataframe_all_elements(self,elements,header,property):
 
-        data = pd.DataFrame.chemdata.csv_to_dataframe(path = elements,header=header)
-        data = data.drop(columns = ['formula'])
+        data = pd.DataFrame.chemdata.csv_to_dataframe(path = elements,header=header,property=property)
+        data = data.iloc[:,:118]
         assert (data.to_numpy() == np.eye(118,118)).all()
 
-    def test_csv_to_dataframe_all_elements(self,elements,header):
+    def test_csv_to_dataframe_all_elements(self,elements,header,property):
 
-        data = chela.csv_to_dataframe(path = elements,header=header)
-        data = data.drop(columns = ['formula'])
+        data = chela.csv_to_dataframe(path = elements,header=header,property=property)
+        data = data.iloc[:,:118]
         assert (data.to_numpy() == np.eye(118,118)).all()
