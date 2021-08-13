@@ -88,9 +88,14 @@ class TestCsvToDataframe:
         data = pd.DataFrame.chemdata.csv_to_dataframe(path = elements,header=header,property=property)
         data = data.iloc[:,:118]
         assert (data.to_numpy() == np.eye(118,118)).all()
+        if data.shape > (118,118):
+            assert ['formula','atomic number'] in data.columns
 
     def test_csv_to_dataframe_all_elements(self,elements,header,property):
 
         data = chela.csv_to_dataframe(path = elements,header=header,property=property)
         data = data.iloc[:,:118]
         assert (data.to_numpy() == np.eye(118,118)).all()
+        if data.shape > (118,118):
+            assert ['formula','atomic number'] in data.columns
+        
