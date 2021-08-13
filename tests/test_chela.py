@@ -79,8 +79,16 @@ class TestStringoToDict:
                             ('elements.csv',False),
                             ('elements_non_header.csv',True)
                             ])
-def test_pandas_ext_csv_to_dataframe_all_elements_non_header(elements,header):
 
-    data = pd.DataFrame.chemdata.csv_to_dataframe(path = elements,header=header)
-    data = data.drop(columns = ['formula'])
-    assert (data.to_numpy() == np.eye(118,118)).all()
+class TestCsvToDataframe:
+    def test_pandas_ext_csv_to_dataframe_all_elements(self,elements,header):
+
+        data = pd.DataFrame.chemdata.csv_to_dataframe(path = elements,header=header)
+        data = data.drop(columns = ['formula'])
+        assert (data.to_numpy() == np.eye(118,118)).all()
+
+    def test_csv_to_dataframe_all_elements(self,elements,header):
+
+        data = chela.csv_to_dataframe(path = elements,header=header)
+        data = data.drop(columns = ['formula'])
+        assert (data.to_numpy() == np.eye(118,118)).all()
