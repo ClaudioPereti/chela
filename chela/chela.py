@@ -177,7 +177,8 @@ def csv_to_dataframe(path,header = False,property = [],robust = False):
             names = names + property
         formula_dataset = pd.read_csv(path,names = names,index_col=False)
     else:
-        formula_dataset = pd.read_csv(path)
+        formula_dataset = pd.read_csv(path,index_col=False)
+        names = list(formula_dataset.columns)
     #Symbols of chemical elements
     chemical_element = ['H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca', 'Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 'Ga', 'Ge', 'As', 'Se', 'Br', 'Kr', 'Rb', 'Sr', 'Y', 'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Cd', 'In', 'Sn', 'Sb', 'Te', 'I', 'Xe', 'Cs', 'Ba', 'La', 'Ce', 'Pr', 'Nd', 'Pm', 'Sm', 'Eu', 'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Tm', 'Yb', 'Lu', 'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg', 'Tl', 'Pb', 'Bi', 'Po', 'At', 'Rn', 'Fr', 'Ra', 'Ac', 'Th', 'Pa', 'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es', 'Fm', 'Md', 'No', 'Lr', 'Rf', 'Db', 'Sg', 'Bh', 'Hs', 'Mt', 'Ds', 'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv', 'Ts', 'Og']
 
@@ -215,7 +216,7 @@ def csv_to_dataframe(path,header = False,property = [],robust = False):
 
 
 #%%
-#csv_to_dataframe(path,header = True,property = ['col'])
+
 import sys
 sys.path.append('/home/claudio/chela/env_chela/lib/python3.6/site-packages')
 import pandas as pd
@@ -306,31 +307,3 @@ class ChemDataFrame:
         chem_data = chem_data[chem_data.iloc[:,Z:].sum(axis=1) == 0]
 
         return chem_data
-
-#%%
-
-#with open('elements.csv','w') as elements:
-#    elements.write('formula\n')
-#    for i in range(1,119):
-#        elements.write(element(i).symbol + '\n')
-
-#%%
-#Z = 1
-#Z -=1
-#data.iloc[:,Z:].sum(axis=1) == 0
-#data[data.iloc[:,Z:].sum(axis=1) == 0]
-#data.head()
-#data.chemdata._obj.head()
-#data.chemdata.drop_heavy_elements(Z = 2)
-#pd.DataFrame.chemdata.from_string_to_dict('H2O')
-#pd.DataFrame.chemdata.check_formula('!H2O')
-#data = pd.DataFrame.chemdata.csv_to_dataframe(path = 'elements.csv')
-
-#data = data.drop(columns = ['formula'])
-#(data.to_numpy() == np.eye(118,118)).all()
-#import numpy as np
-
-#np.eye(118,118)
-#import os
-
-#os.getcwd()
