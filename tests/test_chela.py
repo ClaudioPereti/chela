@@ -76,10 +76,10 @@ class TestStringoToDict:
 
 
 @pytest.mark.parametrize("elements,header,property",[
-                            ('elements.csv',False,[]),
-                            ('elements_non_header.csv',True,[]),
-                            ('elements_header_property.csv',False,[]),
-                            ('elements_non_header_property.csv',True,['atomic_number'])
+                            ('./tests/test_data/elements.csv',False,[]),
+                            ('./tests/test_data/elements_non_header.csv',True,[]),
+                            ('./tests/test_data/elements_header_property.csv',False,[]),
+                            ('./tests/test_data/elements_non_header_property.csv',True,['atomic_number'])
                             ])
 
 class TestCsvToDataframe:
@@ -98,4 +98,23 @@ class TestCsvToDataframe:
         assert (data.to_numpy() == np.eye(118,118)).all()
         if data.shape > (118,118):
             assert ['formula','atomic number'] in data.columns
-        
+
+
+@pytest.mark.parametrize("chemical_formula,header,property,chemical_formula_checked",[
+                            ('tests/test_data/chemical_formula.csv',False,[],'tests/test_data/chemical_formula_checked.csv'),
+                            ('tests/test_data/chemical_formula_property.csv',False,[],'tests/test_data/chemical_formula_property_checked.csv'),
+                            ('tests/test_data/chemical_formula_non_header.csv',True,[],'tests/test_data/chemical_formula_non_header_checked.csv'),
+                            ('tests/test_data/chemical_formula_non_header_property.csv',True,['property'],'tests/test_data/chemical_formula_non_header_property_checked.csv')
+                             ])
+class TestCsvToDataframeMolecules:
+    def test_pandas_ext_csv_to_dataframe_all_elements(self,chemical_formula,header,property,chemical_formula_checked):
+
+        data = pd.DataFrame.chemdata.csv_to_dataframe(path = chemical_formula,header=header,property=property)
+        data_checked = pd.read_csv(chemical_formula_checked)
+        assert (data == data_checked).all().all()
+
+    def test_csv_to_dataframe_all_elements(self,chemical_formula,header,property,chemical_formula_checked):
+
+        data = pd.DataFrame.chemdata.csv_to_dataframe(path = chemical_formula,header=header,property=property)
+        data_checked = pd.read_csv(chemical_formula_checked)
+        assert (data == data_checked).all().all()
