@@ -1,3 +1,5 @@
+"""Module containg test of chela modules"""
+
 import sys
 sys.path.append('chela/')
 import chela
