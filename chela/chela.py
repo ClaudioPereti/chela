@@ -1,3 +1,13 @@
+"""Module containg functions and pandas extention to help handling chemical formula string.
+   The functions and the pandas extension methods are almost the same, the pandas extension
+   has the 'drop_heavy_elements' method that is not avaible as function and the functions
+   have the possibility to use 'basic_check_formula' and 'advanced_check_formula' separately.
+   The pandas extension's method are written in a functional way, they will always return the
+   pandas DataFrame elaborathed as output.
+"""
+
+from chela_error import *
+import pandas as pd
 
 def basic_check_formula(formula):
     """Check the basic correctness of the chemical formula,i.e. empty string, absent element, presence of non alphanumeric value
@@ -21,26 +31,6 @@ def basic_check_formula(formula):
     if not formula.isalnum():
         raise NonAlphaNumericValue
 
-class EmptyFormula(ValueError):
-    pass
-
-class FirstElementAbsent(ValueError):
-    pass
-
-class NonAlphaNumericValue(ValueError):
-    pass
-
-class NegativeQuantityElement(ValueError):
-    pass
-
-class NonExistentElement(ValueError):
-    pass
-
-class ZeroQuantityElement(ValueError):
-    pass
-
-class RepeatedElement(ValueError):
-    pass
 
 def advanced_check_formula(formula):
     """Check the advanced correctness fo the chemical formula, i.e. wrong chemical element, zero value, repeated element
@@ -214,13 +204,6 @@ def csv_to_dataframe(path,header = False,property = [],robust = False):
 
     return chem_dataset
 
-
-#%%
-
-import sys
-sys.path.append('/home/claudio/chela/env_chela/lib/python3.6/site-packages')
-import pandas as pd
-#%%
 
 @pd.api.extensions.register_dataframe_accessor("chemdata")
 class ChemDataFrame:
