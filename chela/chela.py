@@ -9,6 +9,7 @@
 from chela_error import *
 import pandas as pd
 
+
 def basic_check_formula(formula):
     """Check the basic correctness of the chemical formula,i.e. empty string, absent element, presence of non alphanumeric value,non existent element
 
@@ -18,7 +19,7 @@ def basic_check_formula(formula):
     Raises:
         EmptyFormula: ValueError indicating the string is empty
         FirstElementAbsent: ValueError indicating the string starts with a number; the first atom is absent
-        NonAlphaNumericValue: ValueError indicating the presence of symbol different from numbers and letters
+        NonAlphaNumericValue: ValueError indicating the presence of symbol different from numbers and letters excluded 0
         NonExistentElement: ValueError indicating the presence of non existent atomic symbol
     """
 
@@ -28,8 +29,9 @@ def basic_check_formula(formula):
     #Check if the first element is present
     if formula[0].isnumeric():
         raise FirstElementAbsent
-    #Check the presence of non alphanumeric values, included negative quantity
-    if not formula.isalnum():
+    #Check the presence of non alphanumeric values, excluded . and included negative quantity
+    alphanumplus = [(lambda letter: letter.isalnum() or letter == '.')(letter) for letter in formula]
+    if not all(alphanumplus):
         raise NonAlphaNumericValue
     #Check for inexistent atomic symbols
     for index,letter in enumerate(formula):
