@@ -141,6 +141,19 @@ def from_string_to_dict(formula):
                 dict_formula[chemical_element] = [1.0]
     return dict_formula
 
+robust = True
+material= 'H2!O'
+for i in range(2):
+    if robust:
+        try:
+            check_formula(material)
+        except ValueError:
+            print('ok')
+        #Pass to the next iteration
+            continue
+#controlla funzionamento con robust e senza
+    else:
+        check_formula(material)
 
 def csv_to_dataframe(path,header = False,property = [],robust = False):
     """Load a csv file containing chemical formula and transform it into a DataFrame
