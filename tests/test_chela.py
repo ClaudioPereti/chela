@@ -189,4 +189,25 @@ class TestCsvToDataframeMolecules:
         data_checked = pd.read_csv(chemical_formula_checked)
         assert (data == data_checked).all().all()
 
-#ADD TEST FOR ROBUST
+
+@pytest.mark.parametrize("elements,header,property,robust",[
+                            ('./tests/test_data/elements_robust.csv',False,[],True),
+                            ])
+
+def test_csv_to_dataframe_all_elements(elements,header,property,robust):
+
+    data = chela.csv_to_dataframe(path = elements,header=header,property=property,robust=robust)
+    data = data.iloc[:,:118]
+    assert (data.to_numpy() == np.eye(118,118)).all()
+    if data.shape > (118,118):
+        assert ['formula','atomic number'] in data.columns
+
+@pytest.mark.parametrize("chemical_formula,header,property,robust,chemical_formula_checked",[
+                            ('tests/test_data/chemical_formula_robust.csv',False,[],True,'tests/test_data/chemical_formula_checked.csv'),
+                            ])
+
+def test_csv_to_dataframe_all_elements(chemical_formula,header,property,robust,chemical_formula_checked):
+
+    data = pd.DataFrame.chemdata.csv_to_dataframe(path = chemical_formula,header=header,property=property,robust=robust)
+    data_checked = pd.read_csv(chemical_formula_checked)
+    assert (data == data_checked).all().all()
