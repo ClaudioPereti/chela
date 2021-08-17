@@ -20,6 +20,10 @@ import pytest
                                    ])
 
 class TestBasicFormula:
+    """Tests for basic check formula as function and as method.
+
+       Test if the check_formula detect void formulas,incorrect characters,formulas starting with numbers, only numbers.
+    """
 
     def test_basic_check_formula(self,basic_check_formula):
         with pytest.raises(ValueError):
@@ -46,6 +50,11 @@ class TestBasicFormula:
                                      ])
 
 class TestAdvancedFormula:
+    """Tests for advanced check formula as function and as method.
+
+       Test if the check_formula detect 0 quantity, inexistent atomic symbols, repeated elements.
+    """
+
     def test_advanced_check_formula(self,advanced_check_formula):
         with pytest.raises(ValueError):
             chela.advanced_check_formula(advanced_check_formula)
@@ -68,6 +77,8 @@ class TestAdvancedFormula:
                                    ])
 
 class TestStringoToDict:
+    """Test the correctness of the conversion from string to dictionary"""
+
     def test_from_string_to_dict(self,string_formula,dict_formula):
         assert chela.from_string_to_dict(string_formula) == dict_formula
 
@@ -85,6 +96,7 @@ class TestStringoToDict:
                             ])
 
 class TestCsvToDataframe:
+    """Test the correctness of the conversion from csv file containing all the atoms to pandas DataFrame"""
     def test_pandas_ext_csv_to_dataframe_all_elements(self,elements,header,property):
 
         data = pd.DataFrame.chemdata.csv_to_dataframe(path = elements,header=header,property=property)
@@ -109,6 +121,7 @@ class TestCsvToDataframe:
                             ('tests/test_data/chemical_formula_non_header_property.csv',True,['property'],'tests/test_data/chemical_formula_non_header_property_checked.csv')
                              ])
 class TestCsvToDataframeMolecules:
+    """Test the correctness of the conversion from csv file containing molecules to pandas DataFrame"""
     def test_pandas_ext_csv_to_dataframe_all_elements(self,chemical_formula,header,property,chemical_formula_checked):
 
         data = pd.DataFrame.chemdata.csv_to_dataframe(path = chemical_formula,header=header,property=property)
