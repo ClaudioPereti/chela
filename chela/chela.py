@@ -30,6 +30,11 @@ def basic_check_formula(formula):
     #Check the presence of non alphanumeric values, included -
     if not formula.isalnum():
         raise NonAlphaNumericValue
+    #Check for inexistent atomic symbols
+
+    for index,letter in enumerate(formula):
+        if letter.islower() and formula[index-1].isnumeric():
+            raise NonExistentElement
 
 
 def advanced_check_formula(formula):
