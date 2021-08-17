@@ -28,7 +28,7 @@ def basic_check_formula(formula):
     #Check if the first element is present
     if formula[0].isnumeric():
         raise FirstElementAbsent
-    #Check the presence of non alphanumeric values, included -
+    #Check the presence of non alphanumeric values, included negative quantity
     if not formula.isalnum():
         raise NonAlphaNumericValue
     #Check for inexistent atomic symbols
@@ -64,12 +64,10 @@ def advanced_check_formula(formula):
             raise NonExistentElement
 
     #Check if an element is repeated in the formula, using the fact that a dictionary overwrite a key if alredy present
-    letters = ''.join(str(element) for element in dict_formula.keys())
-    float_numbers = ''.join(str(number[0]) for number in dict_formula.values() if not number[0].is_integer())
-    int_numbers = ''.join(str(int(number[0])) for number in dict_formula.values() if number[0].is_integer() and number[0] != 1)
-    complete_formula = letters + float_numbers + int_numbers
+    atoms_symbols = ''.join(list(from_string_to_dict(formula).keys()))
+    complete_atoms_symbols = [letter for letter in formula if letter.isalpha()]
 
-    if len(complete_formula) != len(formula):
+    if len(complete_atoms_symbols) != len(atoms_symbols):
         raise RepeatedElement
 
 def check_formula(formula):
