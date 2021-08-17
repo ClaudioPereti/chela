@@ -47,6 +47,7 @@ class TestBasicFormula:
                                    'Ge',
                                    'Mn91Al1',
                                    'OFH',
+                                   'Mn42.3Al63.1Fe21.0'
                                    ])
 
 class TestBasicFormula:
@@ -95,6 +96,32 @@ class TestAdvancedFormula:
         with pytest.raises(ValueError):
             pd.DataFrame().chemdata.check_formula(advanced_check_formula)
 
+
+@pytest.mark.parametrize('advanced_check_formula',
+                                   [
+                                   'H',
+                                   'Al9',
+                                   'OH',
+                                   'Ge',
+                                   'Mn91Al1',
+                                   'OFH',
+                                   'Mn42.3Al63.1Fe21.0'
+                                   ])
+
+class TestAdvancedFormula:
+    """Tests for advanced check formula as function and as method.
+
+       Test if the check_formula detect 0 quantity, inexistent atomic symbols, repeated elements.
+    """
+
+    def test_advanced_check_formula(self,advanced_check_formula):
+        assert not chela.advanced_check_formula(advanced_check_formula)
+
+    def test_second_part_check_formula(self,advanced_check_formula):
+        assert not chela.check_formula(advanced_check_formula)
+
+    def test_pandas_ext_check_formula(self,advanced_check_formula):
+        assert not pd.DataFrame().chemdata.check_formula(advanced_check_formula)
 
 @pytest.mark.parametrize('string_formula,dict_formula',
                                    [
