@@ -13,6 +13,7 @@ import pytest
                                    '',
                                    '1',
                                    '123H',
+                                   'Al9o2',
                                    '3O',
                                    '?Ge',
                                    'Mn!',
@@ -37,6 +38,33 @@ class TestBasicFormula:
     def test_pandas_ext_check_formula(self,basic_check_formula):
         with pytest.raises(ValueError):
             pd.DataFrame().chemdata.check_formula(basic_check_formula)
+
+@pytest.mark.parametrize('basic_check_formula',
+                                   [
+                                   'H',
+                                   'Al9',
+                                   'OH',
+                                   'Ge',
+                                   'Mn91Al1',
+                                   'OFH',
+                                   ])
+
+class TestBasicFormula:
+    """Tests for basic check formula as function and as method.
+
+       Test if the check_formula detect void formulas,incorrect characters,formulas starting with numbers, only numbers.
+    """
+
+    def test_basic_check_formula(self,basic_check_formula):
+        assert not chela.basic_check_formula(basic_check_formula)
+
+
+    def test_first_part_check_formula(self,basic_check_formula):
+        assert not chela.check_formula(basic_check_formula)
+
+    def test_pandas_ext_check_formula(self,basic_check_formula):
+        assert not pd.DataFrame().chemdata.check_formula(basic_check_formula)
+
 
 @pytest.mark.parametrize('advanced_check_formula',
                                     [
