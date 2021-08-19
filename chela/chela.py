@@ -210,7 +210,7 @@ def csv_to_dataframe(path,header = False,property = [],robust = False):
     return chem_dataset
 
 
-@pd.api.extensions.register_dataframe_accessor("chemdata")
+@pd.api.extensions.register_dataframe_accessor("chela")
 class ChemDataFrame:
     """Extention of the pandas dataframe to deal with chemical data"""
 
@@ -292,6 +292,7 @@ class ChemDataFrame:
         """
         chem_data = self._obj
         Z -=1
+        # Keep only rows with 0 for elements greater than Z 
         chem_data = chem_data[chem_data.iloc[:,Z:].sum(axis=1) == 0]
 
         return chem_data
