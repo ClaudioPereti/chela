@@ -37,7 +37,7 @@ class TestBasicFormula:
 
     def test_pandas_ext_check_formula(self,basic_check_formula):
         with pytest.raises(ValueError):
-            pd.DataFrame().chemdata.check_formula(basic_check_formula)
+            pd.DataFrame().chela.check_formula(basic_check_formula)
 
 @pytest.mark.parametrize('basic_check_formula',
                                    [
@@ -64,7 +64,7 @@ class TestBasicFormula:
         assert not chela.check_formula(basic_check_formula)
 
     def test_pandas_ext_check_formula(self,basic_check_formula):
-        assert not pd.DataFrame().chemdata.check_formula(basic_check_formula)
+        assert not pd.DataFrame().chela.check_formula(basic_check_formula)
 
 
 @pytest.mark.parametrize('advanced_check_formula',
@@ -94,7 +94,7 @@ class TestAdvancedFormula:
 
     def test_pandas_ext_check_formula(self,advanced_check_formula):
         with pytest.raises(ValueError):
-            pd.DataFrame().chemdata.check_formula(advanced_check_formula)
+            pd.DataFrame().chela.check_formula(advanced_check_formula)
 
 
 @pytest.mark.parametrize('advanced_check_formula',
@@ -121,7 +121,7 @@ class TestAdvancedFormula:
         assert not chela.check_formula(advanced_check_formula)
 
     def test_pandas_ext_check_formula(self,advanced_check_formula):
-        assert not pd.DataFrame().chemdata.check_formula(advanced_check_formula)
+        assert not pd.DataFrame().chela.check_formula(advanced_check_formula)
 
 @pytest.mark.parametrize('string_formula,dict_formula',
                                    [
@@ -139,7 +139,7 @@ class TestStringoToDict:
 
 
     def test_pandas_ext_from_string_to_dict(self,string_formula,dict_formula):
-         assert pd.DataFrame().chemdata.from_string_to_dict(string_formula) == dict_formula
+         assert pd.DataFrame().chela.from_string_to_dict(string_formula) == dict_formula
 
 
 
@@ -155,7 +155,7 @@ class TestCsvToDataframe:
     def test_pandas_ext_csv_to_dataframe_all_elements(self,elements,header,property):
 
         #Transform the csv file into a pandas DataFrame
-        data = pd.DataFrame.chemdata.csv_to_dataframe(path = elements,header=header,property=property)
+        data = pd.DataFrame.chela.csv_to_dataframe(path = elements,header=header,property=property)
         #The data are all the atoms, so 118 elements
         #Peel off other columns that aren't atomic symbols
         data = data.iloc[:,:118]
@@ -194,14 +194,14 @@ class TestCsvToDataframeMolecules:
     def test_pandas_ext_csv_to_dataframe_all_elements(self,chemical_formula,header,property,chemical_formula_checked):
 
         #Transform the data, chemical formulas, into a pandas dataframe
-        data = pd.DataFrame.chemdata.csv_to_dataframe(path = chemical_formula,header=header,property=property)
+        data = pd.DataFrame.chela.csv_to_dataframe(path = chemical_formula,header=header,property=property)
         data_checked = pd.read_csv(chemical_formula_checked)
         assert (data == data_checked).all().all()
 
     def test_csv_to_dataframe_all_elements(self,chemical_formula,header,property,chemical_formula_checked):
 
         #Transform the data, chemical formulas, into a pandas dataframe
-        data = pd.DataFrame.chemdata.csv_to_dataframe(path = chemical_formula,header=header,property=property)
+        data = pd.DataFrame.chela.csv_to_dataframe(path = chemical_formula,header=header,property=property)
         data_checked = pd.read_csv(chemical_formula_checked)
         assert (data == data_checked).all().all()
 
@@ -233,8 +233,23 @@ def test_csv_to_dataframe_all_elements(chemical_formula,header,property,robust,c
     """Test if wrong formulas block the conversion into a dataframe"""
 
     #Transform the data, chemical formulas, into a pandas dataframe
-    data = pd.DataFrame.chemdata.csv_to_dataframe(path = chemical_formula,header=header,property=property,robust=robust)
+    data = pd.DataFrame.chela.csv_to_dataframe(path = chemical_formula,header=header,property=property,robust=robust)
     #Load the correct Dataframe containg the formulas
     data_checked = pd.read_csv(chemical_formula_checked)
     #Compare the two daraframe
+    assert (data == data_checked).all().all()
+
+
+@pytest.mark.parametrize("chemical_formula",[
+                            ('tests/test_data/chemical_formula.csv'),
+                            ])
+
+def test_drop_heavy_elements(chemical_formula):
+
+    #Transform the data, chemical formulas, into a pandas dataframe
+    data = pd.DataFrame.chela.csv_to_dataframe(path = chemical_formula)
+    # Drop manually the formula with Z greater than 8
+    data_checked = data.drop(axis = 0,index = [0,3,4])
+    # Drop using the method
+    data = data.chela.drop_heavy_elements(8)
     assert (data == data_checked).all().all()
