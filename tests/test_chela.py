@@ -125,10 +125,14 @@ class TestAdvancedFormula:
 
 @pytest.mark.parametrize('string_formula,dict_formula',
                                    [
-                                   ('H',{'H':[1]}),
-                                   ('H2O',{'H':[2],'O':[1]}),
-                                   ('OH',{'H':[1],'O':[1]}),
-                                   ('NH3',{'N':[1],'H':[3]}),
+                                   ('H',{'H':1}),
+                                   ('H2O',{'H':2,'O':1}),
+                                   ('OH',{'H':1,'O':1}),
+                                   ('NH3',{'N':1,'H':3}),
+                                   ('Al2O3',{'Al':2,'O':3}),
+                                   ('CaCO3',{'Ca':1,'C':1,'O':3}),
+                                   ('Na2CO3',{'Na':2,'C':1,'O':3}),
+                                   ('Al63.0Fe20.1Mn10.2',{'Al':63.0,'Fe':20.1,'Mn':10.2}),
                                    ])
 
 class TestStringoToDict:
@@ -206,34 +210,34 @@ class TestCsvToDataframeMolecules:
         assert (data == data_checked).all().all()
 
 
-@pytest.mark.parametrize("elements,header,property,robust",[
-                            ('./tests/test_data/elements_robust.csv',False,[],True),
+@pytest.mark.parametrize("elements,header,property",[
+                            ('./tests/test_data/elements_robust.csv',False,[]),
                             ])
 
-def test_csv_to_dataframe_all_elements(elements,header,property,robust):
+def test_csv_to_dataframe_all_elements(elements,header,property):
     """Test if wrong formulas block the conversion into a dataframe"""
 
+    with pytest.warns(UserWarning,match="Some chemical formulas have been skipped because they are wrong or written in an unrecognized format"):
+        #Transform the csv file into a pandas DataFrame
+        data = chela.csv_to_dataframe(path = elements,header=header,property=property)
+        #The data are all the atoms, so 118 elements
+        #Peel off other columns that aren't atomic symbols
+        data_pure = data.iloc[:,:118]
+        assert (data_pure.to_numpy() == np.eye(118,118)).all()
+        #if other columns are present check if they are the wanted ones
+        if data.shape > (118,118):
+            assert 'formula' in list(data.columns)
+            if data.shape > (118,119):
+                assert 'atomic_number' in list(data.columns)
+
+@pytest.mark.parametrize("chemical_formula,header,property,chemical_formula_checked",[
+                            ('tests/test_data/chemical_formula_robust.csv',False,[],'tests/test_data/chemical_formula_checked.csv'),
+                            ])
+
+def test_csv_to_dataframe_all_elements(chemical_formula,header,property,chemical_formula_checked):
+    """Test if wrong formulas block the conversion into a dataframe"""
     #Transform the csv file into a pandas DataFrame
-    data = chela.csv_to_dataframe(path = elements,header=header,property=property,robust=robust)
-    #The data are all the atoms, so 118 elements
-    #Peel off other columns that aren't atomic symbols
-    data_pure = data.iloc[:,:118]
-    assert (data_pure.to_numpy() == np.eye(118,118)).all()
-    #if other columns are present check if they are the wanted ones
-    if data.shape > (118,118):
-        assert 'formula' in list(data.columns)
-        if data.shape > (118,119):
-            assert 'atomic_number' in list(data.columns)
-
-@pytest.mark.parametrize("chemical_formula,header,property,robust,chemical_formula_checked",[
-                            ('tests/test_data/chemical_formula_robust.csv',False,[],True,'tests/test_data/chemical_formula_checked.csv'),
-                            ])
-
-def test_csv_to_dataframe_all_elements(chemical_formula,header,property,robust,chemical_formula_checked):
-    """Test if wrong formulas block the conversion into a dataframe"""
-
-    #Transform the data, chemical formulas, into a pandas dataframe
-    data = pd.DataFrame.chela.csv_to_dataframe(path = chemical_formula,header=header,property=property,robust=robust)
+    data = chela.csv_to_dataframe(path = chemical_formula,header=header,property=property)
     #Load the correct Dataframe containg the formulas
     data_checked = pd.read_csv(chemical_formula_checked)
     #Compare the two daraframe
