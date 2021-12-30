@@ -9,6 +9,7 @@
 from chela.chela_error import *
 import pandas as pd
 import numpy as np
+import re
 
 
 def basic_check_formula(formula):
@@ -91,7 +92,6 @@ def check_formula(formula):
     basic_check_formula(formula)
     advanced_check_formula(formula)
 
-import re
 
 def from_string_to_dict(formula):
     """Transform the chemical formula from a string to a dict
@@ -129,7 +129,7 @@ def from_string_to_dict(formula):
     return dict_formula
 
 
-def csv_to_dataframe(path,header = False,property = [],robust = False):
+def csv_to_dataframe(path,header = False,property = []):
     """Load a csv file containing chemical formula and transform it into a DataFrame
 
     Load a csv file containig chemical formula in a column into a pandas DataFrame. The Pandas DataFrame has element symbols and chemical formula as columns;
@@ -179,45 +179,13 @@ def csv_to_dataframe(path,header = False,property = [],robust = False):
 
 
 def take_good_formula_skip_bad_formula(formula):
+    """Return True if the formula si correct, False otherwise"""
+
     try:
         check_formula(formula)
         return True
     except ValueError:
-        #Pass to the next iteration
         return False
-    #controlla funzionamento con robust e senza
-
-
-def csv_to_dataframe(path,header = False,property = []):
-
-    names = ['formula']
-    #Load csv file from path
-    #Header is True if the csv file doesn't contain the header
-    if header:
-        #Property is used if more property of the material are needed
-        if property:
-            names = names + property
-        dataset_formula = pd.read_csv(path,names = names,index_col=False)
-    else:
-        dataset_formula = pd.read_csv(path,index_col=False)
-        names = list(dataset_formula.columns)
-    #Symbols of chemical elements
-    chemical_element = ['H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca', 'Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 'Ga', 'Ge', 'As', 'Se', 'Br', 'Kr', 'Rb', 'Sr', 'Y', 'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Cd', 'In', 'Sn', 'Sb', 'Te', 'I', 'Xe', 'Cs', 'Ba', 'La', 'Ce', 'Pr', 'Nd', 'Pm', 'Sm', 'Eu', 'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Tm', 'Yb', 'Lu', 'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg', 'Tl', 'Pb', 'Bi', 'Po', 'At', 'Rn', 'Fr', 'Ra', 'Ac', 'Th', 'Pa', 'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es', 'Fm', 'Md', 'No', 'Lr', 'Rf', 'Db', 'Sg', 'Bh', 'Hs', 'Mt', 'Ds', 'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv', 'Ts', 'Og']
-
-
-    list_material_as_dictionary = [from_string_to_dict(material['formula']) for _,material in dataset_formula.iterrows() if take_good_formula_skip_bad_formula(material['formula'])]
-    dataset_material = pd.DataFrame(list_material_as_dictionary,columns = chemical_element)
-    dataset_material = dataset_material.replace(np.nan,0)
-    dataset_material['formula'] = dataset_formula['formula']
-
-    if len(list_material_as_dictionary) != dataset_formula.shape[0]:
-        import warnings
-        warnings.warn("Some chemical formulas have been skipped because they are wrong or written in an unrecognized format")
-
-    for name in names:
-        dataset_material[name] = dataset_formula[name]
-
-    return dataset_material
 
 
 
