@@ -1,5 +1,5 @@
 from configparser import ConfigParser
-from chela import check_formula, csv_to_dataframe
+from chela.formula import check_formula, csv_to_dataframe
 import argparse
 
 def main():
@@ -26,14 +26,8 @@ def main():
     my_parser.add_argument('--header',
                            action='store_true',
                            default=False,
-                           help="Flag if csv file doesn't contain an header",
+                           help="Flag if csv file contain an header",
                            )
-    #Flag if csv fine contain wrong chemical formula that have to be ignored
-    my_parser.add_argument('--robust',
-                          action='store_true',
-                          default=False,
-                          help="Flag if csv file contain wrong formula that will be excluded from the dataframe",
-                          )
 
 
     #Parse the args
@@ -48,8 +42,7 @@ def main():
         print('Transforming file into a Dataframe...')
         source, destination = args.dataframe
         header = args.header
-        robust = args.robust
-        dataframe = csv_to_dataframe(path = source,header=header,robust=robust)
+        dataframe = csv_to_dataframe(path = source,header=header)
         dataframe.to_csv(destination,index=False)
         print('Dataframe saved.')
 
