@@ -129,36 +129,36 @@ def from_string_to_dict(formula):
     return dict_formula
 
 
-def csv_to_dataframe(path,header = False,property = []):
+def csv_to_dataframe(path,header = True):
     """Load a csv file containing chemical formula and transform it into a DataFrame
 
-    Load a csv file containig chemical formula in a column into a pandas DataFrame. The Pandas DataFrame has element symbols and chemical formula as columns;
-    If property is not a empty list there are preperty names too as columns. Every row represent a material with the relative quantity written in the columns.
+    Turn a csv file containig chemical formula and other property in columns into a pandas DataFrame.
+    The Pandas DataFrame has element symbols and chemical formula (and other property if present
+    in the file) as columns;
+    Each row represent a material formula: the relative quantity is written fir each chemical element in the columns.
+
+    First column must contain the chemical formulas written as strings.
 
     Args:
         path: A string containig the path and the name of the csv file
-        header: Optional (Default:False); A boolean indicating if the csv file have as first row the word 'formula'
-        property: Optional; A list containg the name of other property, excluded 'formula', of the material both written in the csv file
-        robust: Optional ( Default:False); A Boolean stopping the conversion into a DataFrame if mispelled or wrong formula are found.
-                If robust is set to True it continue skipping the problematic formula
+        header: Optional (Default:True); A boolean indicating if the csv file has as first row the word 'formula'
 
     Return:
         A pandas DataFrame with columns set as element symbols, as chemical formula and as property element if present
     """
 
 
-    #Columns name of the DataFrame
-    names = ['formula']
     #Load csv file from path
-    #Header is True if the csv file doesn't contain the header
+    #Header is True if the csv file contain the header
     if header:
-        #Property is used if more property of the material are needed
-        if property:
-            names = names + property
-        dataset_formula = pd.read_csv(path,names = names,index_col=False)
-    else:
         dataset_formula = pd.read_csv(path,index_col=False)
         names = list(dataset_formula.columns)
+    #If False we rename the first column(that contain the chemical formulas as string) with formula
+    else:
+        dataset_formula = pd.read_csv(path,header = None,index_col=False)
+        dataset_formula = dataset_formula.rename(columns = {0:'formula'})
+
+
     #Symbols of chemical elements
     chemical_element = ['H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca', 'Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 'Ga', 'Ge', 'As', 'Se', 'Br', 'Kr', 'Rb', 'Sr', 'Y', 'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Cd', 'In', 'Sn', 'Sb', 'Te', 'I', 'Xe', 'Cs', 'Ba', 'La', 'Ce', 'Pr', 'Nd', 'Pm', 'Sm', 'Eu', 'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Tm', 'Yb', 'Lu', 'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg', 'Tl', 'Pb', 'Bi', 'Po', 'At', 'Rn', 'Fr', 'Ra', 'Ac', 'Th', 'Pa', 'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es', 'Fm', 'Md', 'No', 'Lr', 'Rf', 'Db', 'Sg', 'Bh', 'Hs', 'Mt', 'Ds', 'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv', 'Ts', 'Og']
 
@@ -173,9 +173,11 @@ def csv_to_dataframe(path,header = False,property = []):
         warnings.warn("Some chemical formulas have been skipped because they are wrong or written in an unrecognized format")
 
     #Add property to the material dataset
-    dataset_material.loc[:,names] = dataset_formula.loc[:,names]
+    if header:
+        dataset_material.loc[:,names] = dataset_formula.loc[:,names]
 
     return dataset_material
+
 
 
 def take_good_formula_skip_bad_formula(formula):
@@ -218,7 +220,7 @@ class ChemDataFrame:
 
     #Transform a csv file containing chemical formulas into a pandas dataframe
     @staticmethod
-    def csv_to_dataframe(path,header = False,property = []):
+    def csv_to_dataframe(path,header = True):
         """Load a csv file containing chemical formula and transform it into a DataFrame
 
         Load a csv file containig chemical formula in a column into a pandas DataFrame. The Pandas DataFrame has element symbols and chemical formula as columns;
@@ -235,7 +237,7 @@ class ChemDataFrame:
             A pandas DataFrame with columns set as element symbols, as chemical formula and as property element if present
         """
 
-        return csv_to_dataframe(path,header = header,property = property)
+        return csv_to_dataframe(path,header = header)
 
     #Check the correctness of the chemical formula
     @staticmethod
