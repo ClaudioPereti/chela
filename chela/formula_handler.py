@@ -153,6 +153,7 @@ def csv_to_dataframe(path,header = True):
     if header:
         dataset_formula = pd.read_csv(path,index_col=False)
         names = list(dataset_formula.columns)
+        dataset_formula = dataset_formula.rename(columns = {names[0]:'formula'})
     #If False we rename the first column(that contain the chemical formulas as string) with formula
     else:
         dataset_formula = pd.read_csv(path,header = None,index_col=False)
