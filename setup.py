@@ -11,7 +11,7 @@ README = (HERE / "README.md").read_text()
 # setup
 setup(
     name = "chela",
-    version = "1.0.0",
+    version = "1.0.1",
     description = "Library for handling chemical formulas",
     long_description = README,
     long_description_content_type = "text/markdown",
