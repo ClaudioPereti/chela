@@ -152,8 +152,13 @@ def csv_to_dataframe(path,header = True):
     #Header is True if the csv file contain the header
     if header:
         dataset_formula = pd.read_csv(path,index_col=False)
-        names = list(dataset_formula.columns)
-        dataset_formula = dataset_formula.rename(columns = {names[0]:'formula'})
+        formula_and_property = list(dataset_formula.columns)
+        #We will select the columns by name, so we force the columns containing the chemical
+        #formulas to have name 'formula'
+        dataset_formula = dataset_formula.rename(columns = {formula_and_property[0]:'formula'})
+        #We force the formula name here too becasue we will use it when we merge the
+        #dataframe with chemical symbols and the formulas and property one
+        formula_and_property[0] = 'formula'
     #If False we rename the first column(that contain the chemical formulas as string) with formula
     else:
         dataset_formula = pd.read_csv(path,header = None,index_col=False)
@@ -163,26 +168,30 @@ def csv_to_dataframe(path,header = True):
     #Symbols of chemical elements
     chemical_element = ['H', 'He', 'Li', 'Be', 'B', 'C', 'N', 'O', 'F', 'Ne', 'Na', 'Mg', 'Al', 'Si', 'P', 'S', 'Cl', 'Ar', 'K', 'Ca', 'Sc', 'Ti', 'V', 'Cr', 'Mn', 'Fe', 'Co', 'Ni', 'Cu', 'Zn', 'Ga', 'Ge', 'As', 'Se', 'Br', 'Kr', 'Rb', 'Sr', 'Y', 'Zr', 'Nb', 'Mo', 'Tc', 'Ru', 'Rh', 'Pd', 'Ag', 'Cd', 'In', 'Sn', 'Sb', 'Te', 'I', 'Xe', 'Cs', 'Ba', 'La', 'Ce', 'Pr', 'Nd', 'Pm', 'Sm', 'Eu', 'Gd', 'Tb', 'Dy', 'Ho', 'Er', 'Tm', 'Yb', 'Lu', 'Hf', 'Ta', 'W', 'Re', 'Os', 'Ir', 'Pt', 'Au', 'Hg', 'Tl', 'Pb', 'Bi', 'Po', 'At', 'Rn', 'Fr', 'Ra', 'Ac', 'Th', 'Pa', 'U', 'Np', 'Pu', 'Am', 'Cm', 'Bk', 'Cf', 'Es', 'Fm', 'Md', 'No', 'Lr', 'Rf', 'Db', 'Sg', 'Bh', 'Hs', 'Mt', 'Ds', 'Rg', 'Cn', 'Nh', 'Fl', 'Mc', 'Lv', 'Ts', 'Og']
 
+    dataset_raw_shape = dataset_formula.shape[0]
+    #remove wrong formulas
+    dataset_formula = dataset_formula[dataset_formula['formula'].apply(_keep_good_formula)]
+    dataset_formula = dataset_formula.reset_index(drop=True)
+    dataset_cleaned_shape = dataset_formula.shape[0]
 
-    list_material_as_dictionary = [from_string_to_dict(material['formula']) for _,material in dataset_formula.iterrows() if take_good_formula_skip_bad_formula(material['formula'])]
+    list_material_as_dictionary = [from_string_to_dict(material['formula']) for _,material in dataset_formula.iterrows()]
     dataset_material = pd.DataFrame(list_material_as_dictionary,columns = chemical_element)
     dataset_material = dataset_material.replace(np.nan,0)
 
     #Send a warning if dataset_formula contain wrong formulas
-    if len(list_material_as_dictionary) != dataset_formula.shape[0]:
+    if dataset_raw_shape != dataset_cleaned_shape:
         import warnings
         warnings.warn("Some chemical formulas have been skipped because they are wrong or written in an unrecognized format")
 
     #Add property to the material dataset
     if header:
-        dataset_material.loc[:,names] = dataset_formula.loc[:,names]
+        dataset_material.loc[:,formula_and_property] = dataset_formula.loc[:,formula_and_property]
 
     return dataset_material
 
 
-
-def take_good_formula_skip_bad_formula(formula):
-    """Return True if the formula si correct, False otherwise"""
+def _keep_good_formula(formula):
+    """Return True if the formula is correct, False otherwise"""
 
     try:
         check_formula(formula)
