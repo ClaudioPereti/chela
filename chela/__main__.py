@@ -1,6 +1,7 @@
 from configparser import ConfigParser
-from chela.formula import check_formula, csv_to_dataframe
+from chela.formula_handler import check_formula, build_dataframe
 import argparse
+import pandas as pd
 
 def main():
     #Define the parser
@@ -15,20 +16,13 @@ def main():
                           help="Check correctness chemical formula",
                           )
 
-    #Add option -d to use csv_to_dataframe function
+    #Add option -d to use build_dataframe function
     my_parser.add_argument('-dataframe',
                            nargs=2,
-                           metavar=('SOURCE','DEST'),
+                           metavar=('SOURCE','NAME'),
                            action='store',
-                           help="Transform chemical formula into dataframe Source Dest",
+                           help="Transform chemical formula into dataframe Source Name",
                            )
-    #Flag if need to add header into the dataframe
-    my_parser.add_argument('--header',
-                           action='store_true',
-                           default=False,
-                           help="Flag if csv file contain an header",
-                           )
-
 
     #Parse the args
     args = my_parser.parse_args()
@@ -41,8 +35,8 @@ def main():
     elif args.dataframe:
         print('Transforming file into a Dataframe...')
         source, destination = args.dataframe
-        header = args.header
-        dataframe = csv_to_dataframe(path = source,header=header)
+        dataset = pd.read_csv(source)
+        dataframe = build_dataframe(dataset)
         dataframe.to_csv(destination,index=False)
         print('Dataframe saved.')
 
