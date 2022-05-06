@@ -2,7 +2,7 @@
 
 import sys
 sys.path.append('chela/')
-import chela
+import chela.formula_handler as chela
 import pandas as pd
 import numpy as np
 import pytest
