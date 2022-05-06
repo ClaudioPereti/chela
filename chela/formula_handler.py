@@ -129,40 +129,32 @@ def from_string_to_dict(formula):
     return dict_formula
 
 
-def csv_to_dataframe(path,header = True):
-    """Load a csv file containing chemical formula and transform it into a DataFrame
+def build_dataframe(dataset):
+    """Transform a pd.DataFrame containing chemical formulas and properties into a DataFrame with chemical symbols as columns
 
-    Turn a csv file containig chemical formula and other property in columns into a pandas DataFrame.
-    The Pandas DataFrame has element symbols and chemical formula (and other property if present
-    in the file) as columns;
-    Each row represent a material formula: the relative quantity is written fir each chemical element in the columns.
+    The Pandas DataFrame in output has element symbols and chemical formula (and other property if present
+    in the input) as columns;
+    Each row represent a material formula: the relative quantity is written for each chemical element in the columns.
 
     First column must contain the chemical formulas written as strings.
 
     Args:
-        path: A string containig the path and the name of the csv file
-        header: Optional (Default:True); A boolean indicating if the csv file has as first row the word 'formula'
+        dataset: A pandas DataFrame containing chemical formulas and relative properties. Header is mandatory.
 
     Return:
         A pandas DataFrame with columns set as element symbols, as chemical formula and as property element if present
     """
 
 
-    #Load csv file from path
-    #Header is True if the csv file contain the header
-    if header:
-        dataset_formula = pd.read_csv(path,index_col=False)
-        formula_and_property = list(dataset_formula.columns)
-        #We will select the columns by name, so we force the columns containing the chemical
-        #formulas to have name 'formula'
-        dataset_formula = dataset_formula.rename(columns = {formula_and_property[0]:'formula'})
-        #We force the formula name here too becasue we will use it when we merge the
-        #dataframe with chemical symbols and the formulas and property one
-        formula_and_property[0] = 'formula'
-    #If False we rename the first column(that contain the chemical formulas as string) with formula
-    else:
-        dataset_formula = pd.read_csv(path,header = None,index_col=False)
-        dataset_formula = dataset_formula.rename(columns = {0:'formula'})
+    #Load pandas dataframe
+    dataset_formula = dataset
+    formula_and_property = list(dataset_formula.columns)
+    #We will select the columns by name, so we force the columns containing the chemical
+    #formulas to have name 'formula'
+    dataset_formula = dataset_formula.rename(columns = {formula_and_property[0]:'formula'})
+    #We force the formula name here too becasue we will use it when we merge the
+    #dataframe with chemical symbols and the formulas and property one
+    formula_and_property[0] = 'formula'
 
 
     #Symbols of chemical elements
@@ -183,9 +175,8 @@ def csv_to_dataframe(path,header = True):
         import warnings
         warnings.warn("Some chemical formulas have been skipped because they are wrong or written in an unrecognized format")
 
-    #Add property to the material dataset
-    if header:
-        dataset_material.loc[:,formula_and_property] = dataset_formula.loc[:,formula_and_property]
+
+    dataset_material.loc[:,formula_and_property] = dataset_formula.loc[:,formula_and_property]
 
     return dataset_material
 
@@ -230,7 +221,7 @@ class ChemDataFrame:
 
     #Transform a csv file containing chemical formulas into a pandas dataframe
     @staticmethod
-    def csv_to_dataframe(path,header = True):
+    def build_dataframe(dataset):
         """Load a csv file containing chemical formula and transform it into a DataFrame
 
         Load a csv file containig chemical formula in a column into a pandas DataFrame. The Pandas DataFrame has element symbols and chemical formula as columns;
@@ -247,7 +238,7 @@ class ChemDataFrame:
             A pandas DataFrame with columns set as element symbols, as chemical formula and as property element if present
         """
 
-        return csv_to_dataframe(path,header = header)
+        return build_dataframe(dataset)
 
     #Check the correctness of the chemical formula
     @staticmethod
